@@ -9,31 +9,29 @@ import numpy as np
 
 # Prepare the folder
 discr_order_name=["P1","P2","P3","P4","Q1","Q2"]
-repeat_times=3
+repeat_times=1
 polyfem_exe=os.path.join("/home/yiwei/polyfem/build", "PolyFEM_bin")
 current_folder = cwd = os.getcwd()
 json_folder="json"
 json_list=["bar.json"] 
 mesh_folder="mesh/square"
-# mesh_list=["square_beam_0.5.msh","square_beam_0.25.msh","square_beam_0.1.msh","square_beam_0.05.msh","square_beam_0.025.msh","square_beam_0.01.msh","square_beam_0.005.msh"]
-# mesh_list=["square_beam_0.025.msh","square_beam_0.022.msh","square_beam_0.021.msh","square_beam_0.02.msh","square_beam_0.019.msh","square_beam_0.016.msh","square_beam_0.013.msh","square_beam_0.01.msh"]
-# mesh_list=["square_beam_0.021.msh","square_beam_0.02.msh"]
-mesh_list=["square_beam_0.020.msh"]
-solver_list=["AMGCL","Hypre","Eigen::CholmodSupernodalLLT","Eigen::PardisoLDLT"]
-result_folder=os.path.join(current_folder,"results","square")
+# mesh_list=os.listdir(mesh_folder)
+# mesh_list=["square_beam_0.021.msh","square_beam_0.020.msh","square_beam_0.019.msh","square_beam_0.016.msh","square_beam_0.013.msh"]
+mesh_list=["square_beam_0.021.msh"]
+# solver_list=["AMGCL","Hypre","Eigen::CholmodSupernodalLLT","Eigen::PardisoLDLT"]
+solver_list=["AMGCL","Eigen::CholmodSupernodalLLT"]
+result_folder=os.path.join(current_folder,"results","cholmod")
 
-
-
-discr_orders=[1,2]
-blocks=[1,3]
-n_refs=[0,1]
+discr_orders=[2]
+blocks=[1]
+n_refs=[1]
 
 # Make result directory
 if (not os.path.exists(result_folder)):
     os.makedirs(result_folder)
 
 def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_time_):
-    temp_path=os.path.join(result_folder,solver_,os.path.splitext(os.path.basename(mesh_))[0],os.path.splitext(os.path.basename(j_file_))[0],discr_order_name[discr_order_],"ref"+str(n_ref_),"block"+str(block_size_),str(repeat_time_))
+    temp_path=os.path.join(result_folder,solver_+"_Parallel",os.path.splitext(os.path.basename(mesh_))[0],os.path.splitext(os.path.basename(j_file_))[0],discr_order_name[discr_order_],"ref"+str(n_ref_),"block"+str(block_size_),str(repeat_time_))
     if (not os.path.exists(temp_path)):
         os.makedirs(temp_path)
     json_base=os.path.join(temp_path,"json")
@@ -65,7 +63,7 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
         #         '--cmd',"--log_file", output_base+"/log.txt"]
         args = [polyfem_exe,
         '--json', tmp_json.name,"--max_threads", "32",
-        '--cmd',"--output_dir",output_base]
+        '--cmd',"--output_dir",output_base,"--log_file", output_base+"/log.txt","--log_level","trace"]
 
         subprocess.run(args) 
 
@@ -83,8 +81,8 @@ if __name__ == '__main__':
                     for n_ref in n_refs:
                         for block_size in blocks:
                             for repeat_time in range(repeat_times):
-                            # for repeat_time in [0,1,2,3]:
                                 if (block_size==1) or (block_enable):
                                     run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time)
+
                 
 
