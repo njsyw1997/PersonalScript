@@ -1,0 +1,60 @@
+{
+	"geometry": [{ 
+        "mesh": "/home/yiwei/PersonalScript/polyfem_oldjson/mesh/square/square_beam_0.5.msh"
+    }],
+    "space": {
+        "discr_order": 1,
+        "advanced": {
+            "use_spline": false,
+            "count_flipped_els": true
+        }
+    },
+
+	"materials": {
+		"type":"LinearElasticity",
+		"E": 210000,
+		"nu": 0.3
+	},	
+	"boundary_conditions": {
+		"dirichlet_boundary": [
+			{
+				"id": 5,
+				"value": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		],
+		"neumann_boundary": [
+			{
+				"id": 6,
+				"value": [
+					0.0,
+					-2,
+					0.0
+				]
+			}
+		]
+	},
+    "solver": {
+        "linear": {
+			"solver": "AMGCL"
+    	}
+	},
+    "output": {
+        "json": "sim.json",
+        "paraview": {
+            "file_name": "sim.pvd",
+            "options": {
+                "material": true,
+                "body_ids": true
+            },
+            "vismesh_rel_area": 10000000
+        },
+        "advanced": {
+            "save_solve_sequence_debug": false,
+            "save_time_sequence": true
+        }
+    }
+}

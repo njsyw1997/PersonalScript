@@ -1,0 +1,248 @@
+{
+    "args": {
+        "boundary_conditions": {
+            "dirichlet_boundary": [
+                {
+                    "id": 5,
+                    "value": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                }
+            ],
+            "neumann_boundary": [
+                {
+                    "id": 6,
+                    "value": [
+                        0.0,
+                        -2,
+                        0.0
+                    ]
+                }
+            ],
+            "obstacle_displacements": [],
+            "pressure_boundary": [],
+            "rhs": null
+        },
+        "common": "",
+        "contact": {
+            "dhat": 0.001,
+            "dhat_percentage": 0.8,
+            "enabled": false,
+            "epsv": 0.001,
+            "friction_coefficient": 0
+        },
+        "geometry": [
+            {
+                "mesh": "/home/yiwei/PersonalScript/polyfem_oldjson/mesh/square/square_beam_0.5.msh"
+            }
+        ],
+        "initial_conditions": {
+            "acceleration": null,
+            "solution": null,
+            "velocity": null
+        },
+        "input": {
+            "data": {
+                "a_path": "",
+                "u_path": "",
+                "v_path": ""
+            }
+        },
+        "materials": {
+            "E": 210000,
+            "nu": 0.3,
+            "type": "LinearElasticity"
+        },
+        "output": {
+            "advanced": {
+                "compute_error": true,
+                "curved_mesh_size": false,
+                "save_nl_solve_sequence": false,
+                "save_solve_sequence_debug": false,
+                "save_time_sequence": true,
+                "sol_at_node": -1,
+                "sol_on_grid": -1,
+                "spectrum": false,
+                "timestep_prefix": "step_",
+                "vis_boundary_only": false
+            },
+            "data": {
+                "a_path": "",
+                "full_mat": "",
+                "mises": "",
+                "nodes": "",
+                "solution": "",
+                "solution_mat": "",
+                "stiffness_mat": "",
+                "stress_mat": "",
+                "u_path": "",
+                "v_path": ""
+            },
+            "json": "sim.json",
+            "paraview": {
+                "file_name": "sim.pvd",
+                "high_order_mesh": true,
+                "options": {
+                    "acceleration": false,
+                    "body_ids": true,
+                    "contact_forces": false,
+                    "friction_forces": false,
+                    "material": true,
+                    "velocity": false
+                },
+                "reference": {
+                    "gradient": null,
+                    "solution": null
+                },
+                "skip_frame": 1,
+                "surface": false,
+                "vismesh_rel_area": 10000000,
+                "volume": true,
+                "wireframe": false
+            }
+        },
+        "root_path": "/home/yiwei/PersonalScript/polyfem_newjson/json/bar_new.json",
+        "solver": {
+            "advanced": {
+                "cache_size": 900000,
+                "lump_mass_matrix": false
+            },
+            "augmented_lagrangian": {
+                "force": false,
+                "initial_weight": 1000000.0,
+                "max_weight": 100000000000.0
+            },
+            "contact": {
+                "CCD": {
+                    "broad_phase": "hash_grid",
+                    "max_iterations": 1000000.0,
+                    "tolerance": 1e-06
+                },
+                "barrier_stiffness": "adaptive",
+                "friction_convergence_tol": 0.01,
+                "friction_iterations": 0,
+                "lagged_damping_weight": 0
+            },
+            "ignore_inertia": false,
+            "linear": {
+                "precond": "Eigen::DiagonalPreconditioner",
+                "solver": "AMGCL"
+            },
+            "nonlinear": {
+                "f_delta": 1e-10,
+                "grad_norm": 1e-08,
+                "line_search": {
+                    "method": "backtracking",
+                    "use_grad_norm_tol": 0.0001
+                },
+                "max_iterations": 1000,
+                "relative_gradient": false,
+                "solver": "newton",
+                "use_grad_norm": true
+            }
+        },
+        "space": {
+            "advanced": {
+                "B": 3,
+                "bc_method": "lsq",
+                "count_flipped_els": true,
+                "discr_order_max": 4,
+                "force_no_ref_for_harmonic": false,
+                "h1_formula": false,
+                "integral_constraints": 2,
+                "isoparametric": false,
+                "n_boundary_samples": -1,
+                "n_harmonic_samples": 10,
+                "poly_bases": "MFSHarmonic",
+                "quadrature_order": -1,
+                "serendipity": false,
+                "use_spline": false
+            },
+            "discr_order": 1,
+            "pressure_discr_order": 1,
+            "use_p_ref": false
+        },
+        "time": null
+    },
+    "average_edge_length": 9.229060872950303,
+    "count_boundary": 0,
+    "count_multi_singular": 0,
+    "count_multi_singular_boundary": 0,
+    "count_non_regular": 0,
+    "count_non_regular_boundary": 0,
+    "count_regular": 0,
+    "count_regular_boundary": 0,
+    "count_simple_singular": 0,
+    "count_simplex": 468,
+    "count_undefined": 0,
+    "discr_order_max": 1,
+    "discr_order_min": 1,
+    "err_h1": 16327862759079.633,
+    "err_h1_semi": 1124741533054.156,
+    "err_l2": 16289077897878.768,
+    "err_linf": 118507834255.22498,
+    "err_linf_grad": 118507834255.22498,
+    "err_lp": 348077502629.4029,
+    "formulation": "LinearElasticity",
+    "geom_order": 1,
+    "geom_order_min": 1,
+    "is_simplicial": true,
+    "iso_parametric": true,
+    "mat_size": 275625,
+    "max_angle": 2.525e-321,
+    "mesh_size": 22.98929849459526,
+    "min_edge_length": 1.8950893528802275,
+    "num_bases": 175,
+    "num_dofs": 525,
+    "num_elements": 468,
+    "num_flipped": 0,
+    "num_non_zero": 15785,
+    "num_p1": 468,
+    "num_p2": 0,
+    "num_p3": 0,
+    "num_p4": 0,
+    "num_p5": 0,
+    "num_pressure_bases": 0,
+    "num_threads": 128,
+    "num_vertices": 175,
+    "peak_memory": 22,
+    "problem": "GenericTensor",
+    "sigma_avg": 0.0,
+    "sigma_max": 0.0,
+    "sigma_min": 0.0,
+    "sol_at_node": [
+        0.0,
+        0.0,
+        0.0
+    ],
+    "sol_max": [
+        32267852974.35331,
+        -35333287642.941284,
+        24.34265471168352
+    ],
+    "sol_min": [
+        -47384324857.61325,
+        -114985465360.16768,
+        -16.389547462723286
+    ],
+    "solver_info": {
+        "final_res_norm": 24356.371679783617,
+        "num_iterations": 1000
+    },
+    "spectrum": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "spectrum_condest": null,
+    "time_assembling_stiffness_mat": 0.015005999999999999,
+    "time_assigning_rhs": 1.4999999999999999e-05,
+    "time_building_basis": 0.0022489999999999997,
+    "time_computing_errors": 0.00215,
+    "time_computing_poly_basis": 1.8999999999999998e-05,
+    "time_loading_mesh": 1e-323,
+    "time_solving": 8.147978
+}

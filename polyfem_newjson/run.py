@@ -10,10 +10,10 @@ import numpy as np
 # Prepare the folder
 discr_order_name=["P1","P2","P3","P4","Q1","Q2"]
 repeat_times=1
-polyfem_exe=os.path.join("/home/yiwei/polyfem/build", "PolyFEM_bin")
+polyfem_exe=os.path.join("build", "PolyFEM_bin")
 current_folder = cwd = os.getcwd()
 json_folder="json"
-json_list=["bar.json"] 
+json_list=["bar_new.json"] 
 mesh_folder="mesh/square"
 # mesh_list=os.listdir(mesh_folder)
 # mesh_list=["square_beam_0.021.msh","square_beam_0.020.msh","square_beam_0.019.msh","square_beam_0.016.msh","square_beam_0.013.msh"]
@@ -42,16 +42,15 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
         os.makedirs(output_base)
     with open(j_file_, 'r') as f:
         json_data = json.load(f)
-    if "time_sequence" in json_data["export"]:
-        json_data["export"]["time_sequence"]=os.path.join(output_base, "sim" + ".pvd")
-    json_data["solver_type"]=solver_
-    json_data["mesh"] = mesh_
-    json_data["n_refs"] =n_ref_
-    json_data["discr_order"] = discr_order_
-    if (solver_=="AMGCL") or (solver_=="Hypre"):
-        json_data["solver_params"][solver_]["block_size"]=block_size_
-    json_data["output"] = os.path.join(json_base, "result"+ ".json")
-    json_data["export"]["paraview"]= os.path.join(output_base, "sol_" + ".vtu")
+    json_data["solver"]["linear"]["solver"]=solver_
+    json_data["geometry"][0]["mesh"] = mesh_
+    # json_data["geometry"]["n_refs"] =n_ref_ #Not implemented in newest polyfem
+    json_data["space"]["discr_order"] = discr_order_
+    ## No way to pass params to solver
+    # if (solver_=="AMGCL") or (solver_=="Hypre"):
+    #     json_data["solver_params"][solver_]["block_size"]=block_size_
+    json_data["output"]["json"] = os.path.join(json_base, "result"+ ".json")
+    json_data["output"]["paraview"]["file_name"]= os.path.join(output_base, "sim" + ".pvd")
     #----------------------------------------------------------------
 
     with tempfile.NamedTemporaryFile(suffix=".json") as tmp_json:
@@ -63,7 +62,7 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
         #         '--cmd',"--log_file", output_base+"/log.txt"]
         args = [polyfem_exe,
         '--json', tmp_json.name,"--max_threads", "32",
-        '--cmd',"--output_dir",output_base,"--log_file", output_base+"/log.txt","--log_level","trace"]
+        "--output_dir",output_base,"--log_file", output_base+"/log.txt","--log_level","trace"]
 
         subprocess.run(args) 
 
