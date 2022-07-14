@@ -1,0 +1,108 @@
+{
+	"mesh": "",
+	"output": "",
+
+	"discr_order": 1,
+	"use_spline": false,
+
+	"problem": "GenericTensor",
+	"tensor_formulation":"LinearElasticity",
+	"export": {},
+	"solver_type": "AMGCL",
+	"solver_params": {
+		"Eigen::LeastSquaresConjugateGradient": {
+			"max_iter": 1000,
+			"tolerance": 1e-10
+		},
+		"Eigen::DGMRES": {
+			"max_iter": 1000,
+			"tolerance": 1e-10
+		},
+		"Eigen::ConjugateGradient": {
+			"max_iter": 1000,
+			"tolerance": 1e-10
+		},
+		"Eigen::BiCGSTAB": {
+			"max_iter": 1000,
+			"tolerance": 1e-10
+		},
+		"Eigen::GMRES": {
+			"max_iter": 1000,
+			"tolerance": 1e-10
+		},
+		"Eigen::MINRES": {
+			"max_iter": 1000,
+			"tolerance": 1e-10
+		},
+		"Pardiso": {
+			"mtype": 2
+		},
+		"Hypre": {
+			"max_iter": 1000,
+			"pre_max_iter": 1000,
+			"tolerance": 1e-10
+		},
+		"AMGCL": {
+			"precond": {
+				"relax": {
+					"degree": 16,
+					"type": "chebyshev",
+					"power_iters": 100,
+					"higher": 2,
+					"lower": 0.008333333333,
+					"scale": true
+				},
+				"class": "amg",
+				"max_levels": 6,
+				"direct_coarse": false,
+				"ncycle": 2,
+				"coarsening": {
+					"type": "smoothed_aggregation",
+					"estimate_spectral_radius": true,
+					"relax": 1,
+					"aggr": {
+						"eps_strong": 0
+					}
+				}
+			},
+			"solver": {
+				"tol": 1e-10,
+				"maxiter": 1000,
+				"type": "cg"
+			}
+		}
+	},
+	"count_flipped_els": true,
+	"n_refs": 0,
+
+	"normalize_mesh": false,
+	"params": {
+		"E": 210000,
+		"nu": 0.3
+	},
+
+	"problem_params": {
+
+		"dirichlet_boundary": [
+			{
+				"id": 5,
+				"value": [
+					0.0,
+					0.0,
+					0.0
+				]
+			}
+		],
+		"neumann_boundary": [
+			{
+				"id": 6,
+				"value": [
+					0.0,
+					-2,
+					0.0
+				]
+			}
+		]
+	}
+
+}
