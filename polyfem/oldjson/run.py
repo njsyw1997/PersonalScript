@@ -27,7 +27,7 @@ solver_list=["Hypre"]
 result_folder="/home/yiwei/results/Hypre_thread"
 
 discr_orders=[2]
-blocks=[1]
+blocks=[3]
 n_refs=[1]
 num_threads=[64,32,16,8,4,2,1]
 
