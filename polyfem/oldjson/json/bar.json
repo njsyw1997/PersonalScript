@@ -37,6 +37,9 @@
 		"Pardiso": {
 			"mtype": 2
 		},
+		"Eigen::PardisoLDLT":{
+			"mtype": 2
+		},
 		"Hypre": {
 			"max_iter": 5000,
 			"pre_max_iter": 1000,

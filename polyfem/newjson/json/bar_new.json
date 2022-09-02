@@ -40,7 +40,7 @@
     "solver": {
         "linear": {
 			"solver": "AMGCL",
-			"precond": "LinearSolver::defaultPrecond()",
+			"precond": "Eigen::DiagonalPreconditioner",
 			"Eigen::BiCGSTAB":{
                 "max_iter": 500,
                 "tolerance": 1e-10
@@ -57,14 +57,14 @@
                 "tolerance": 1e-10
             },
 
-            "pardiso": {
+            "Pardiso": {
                 "mtype": 1   
             },
 
             "AMGCL": {
                 "precond": {
                     "relax": {
-                        "degree": 16,
+                        "degree": 5,
                         "type": "chebyshev",
                         "power_iters": 100,
                         "higher": 2,
@@ -74,7 +74,7 @@
                     "class": "amg",
                     "max_levels": 6,
                     "direct_coarse": false,
-                    "ncycle": 2,
+                    "ncycle": 1,
                     "coarsening": {
                         "type": "smoothed_aggregation",
                         "estimate_spectral_radius": true,
@@ -90,9 +90,14 @@
                     "type": "cg"
                 }
             }
-        },
+        }
+    },
     "output": {
         "json": "sim.json",
+        "advanced": {
+            "save_solve_sequence_debug": false,
+            "save_time_sequence": true
+        },
         "paraview": {
             "file_name": "sim.pvd",
             "options": {
@@ -100,10 +105,6 @@
                 "body_ids": true
             },
             "vismesh_rel_area": 10000000
-        },
-        "advanced": {
-            "save_solve_sequence_debug": false,
-            "save_time_sequence": true
         }
     }
 }

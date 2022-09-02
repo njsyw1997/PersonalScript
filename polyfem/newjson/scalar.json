@@ -17,7 +17,7 @@
             "AMGCL": {
                 "precond": {
                     "relax": {
-                        "degree": 5,
+                        "degree": 16,
                         "type": "chebyshev",
                         "power_iters": 100,
                         "higher": 2,
@@ -27,7 +27,7 @@
                     "class": "amg",
                     "max_levels": 6,
                     "direct_coarse": false,
-                    "ncycle": 1,
+                    "ncycle": 2,
                     "coarsening": {
                         "type": "smoothed_aggregation",
                         "estimate_spectral_radius": true,
@@ -37,6 +37,7 @@
                         }
                     }
                 },
+                "block_size": 1,
                 "solver": {
                     "tol": 1e-10,
                     "maxiter": 1000,
@@ -68,7 +69,7 @@
         },
         "advanced": {
             "save_solve_sequence_debug": false,
-            "save_time_sequence": false
+            "save_time_sequence": true
         }
     },
     "authen_t1": {

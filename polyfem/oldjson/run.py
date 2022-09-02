@@ -20,23 +20,24 @@ json_folder="json"
 json_list=["bar.json"] 
 mesh_folder="../mesh/square"
 # mesh_list=os.listdir(mesh_folder)
+# print(mesh_list)
 # mesh_list=["square_beam_0.021.msh","square_beam_0.020.msh","square_beam_0.019.msh","square_beam_0.016.msh","square_beam_0.013.msh"]
-mesh_list=["square_beam_0.025.msh"]
-# solver_list=["AMGCL","Hypre","Eigen::CholmodSupernodalLLT","Eigen::PardisoLDLT"]
-solver_list=["Hypre"]
-result_folder="/home/yiwei/results/Hypre_thread"
+mesh_list=["square_beam.mesh"]
+# solver_list=["AMGCL","Hypre","Eigen::PardisoLDLT","Eigen::CholmodSupernodalLLT"]
+solver_list=["AMGCL"]
+result_folder="/home/yiwei/results/square_test"
 
-discr_orders=[2]
-blocks=[3]
-n_refs=[1]
-num_threads=[64,32,16,8,4,2,1]
+discr_orders=[1,2]
+blocks=[1,3]
+n_refs=[0,1,2]
+num_threads=[64]
 
 # Make result directory
 if (not os.path.exists(result_folder)):
     os.makedirs(result_folder)
 
 def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_time_,num_thread_):
-    temp_path=os.path.join(result_folder,solver_,os.path.splitext(os.path.basename(mesh_))[0],os.path.splitext(os.path.basename(j_file_))[0],discr_order_name[discr_order_],"ref"+str(n_ref_),"block"+str(block_size_),"Thread"+str(num_thread_),str(repeat_time_))
+    temp_path=os.path.join(result_folder,solver_,os.path.splitext(os.path.basename(mesh_))[0],os.path.splitext(os.path.basename(j_file_))[0],discr_order_name[discr_order_-1],"ref"+str(n_ref_),"block"+str(block_size_),"Thread"+str(num_thread_),str(repeat_time_))
     if (not os.path.exists(temp_path)):
         os.makedirs(temp_path)
     json_base=os.path.join(temp_path,"json")
@@ -104,8 +105,6 @@ if __name__ == '__main__':
                                 for repeat_time in range(repeat_times):
                                     if (block_size==1) or (block_enable):
                                         os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
+                                        print(solver+"_"+mesh_name+"_"+discr_order_name[discr_order-1]+"_"+"n_ref"+str(n_ref)+"_"+"Block"+str(block_size))
                                         run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread)
-                                        assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
-
-                
 

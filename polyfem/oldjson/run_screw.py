@@ -6,25 +6,31 @@ import subprocess
 import tempfile
 from unittest import result
 import numpy as np
+from sqlalchemy import true
+import signal
+
+from sympy import false
 
 # Prepare the folder
 discr_order_name=["P1","P2","P3","P4","Q1","Q2"]
 repeat_times=1
-polyfem_exe=os.path.join("/home/yiwei/polyfem/build", "PolyFEM_bin")
+polyfem_exe=os.path.join("/home/yiwei/polyfem_old/build", "PolyFEM_bin")
 current_folder = cwd = os.getcwd()
 json_folder="json"
-json_list=["bar.json"] 
-mesh_folder="mesh/square"
-mesh_list=["square_beam_0.016.msh"]
-# solver_list=["AMGCL","Hypre","Eigen::CholmodSupernodalLLT","Eigen::PardisoLDLT"]
-solver_list=["Hypre"]
-result_folder=os.path.join(current_folder,"results","thread_mpoff_mpion")
-num_threads=[32,16]
-
+json_list=["screw.json"] 
+mesh_folder="../mesh/screw"
+# mesh_list=os.listdir(mesh_folder)
+# mesh_list=["square_beam_0.021.msh","square_beam_0.020.msh","square_beam_0.019.msh","square_beam_0.016.msh","square_beam_0.013.msh"]
+mesh_list=["screw.msh"]
+# solver_list=["AMGCL","Eigen::CholmodSupernodalLLT","Eigen::PardisoLDLT"]
+solver_list=["AMGCL","Hypre","Eigen::PardisoLDLT","Eigen::CholmodSupernodalLLT"]
+result_folder="/home/yiwei/results/screw"
 
 discr_orders=[1]
 blocks=[1,3]
-n_refs=[1]
+n_refs=[0]
+num_threads=[64]
+
 
 # Make result directory
 if (not os.path.exists(result_folder)):
@@ -59,34 +65,52 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
             file_temp.write(json.dumps(json_data, indent=4))
 
         # args = [polyfem_exe,
-        #         '--json', tmp_json.name,"--max_threads", "32",
-        #         '--cmd']
-        assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread_))
+        # '--json', tmp_json.name,"--max_threads", "32",
+        # '--cmd',"--output_dir",output_base,"--log_file", output_base+"/log.txt","--log_level","trace"]
+
+        
         args = [polyfem_exe,
         '--json', tmp_json.name,"--max_threads", str(num_thread_),
-        '--cmd',"--output_dir",output_base,"--log_file", output_base+"/log.txt","--log_level","0"]
+        '--cmd',"--output_dir",output_base]
+        logfile = open(output_base+"/log.txt", "w")
+        cpufile=open(output_base+"/cpu.txt", "w")
+        cpufile.close()
+        p1=subprocess.Popen(['sh', './thread.sh',output_base+"/cpu.txt"])
+        assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread_))
+        subprocess.run(args,stdout=logfile,stderr=logfile)   
+        # subprocess.run(args)    
+        p1.kill()
+        logfile.close()
+        
+        
+        # cpufile=p_cpu.communicate()[0]
+        # os.killpg(os.getpgid(p_cpu.pid), signal.SIGTERM)
+        # cpufile.close()       
+        
 
-        subprocess.run(args) 
-
-if __name__ == '__main__':
-    # if len(json_list)!=len(mesh_list):
-    #     print("Json file and mesh file not match")
-    #     exit(0)    
+if __name__ == '__main__':   
     for json_name in json_list:
         for mesh_name in mesh_list:
             json_file=os.path.join(json_folder,json_name)
             mesh_file=os.path.join(mesh_folder,mesh_name)
             for solver in solver_list:
                 block_enable=((solver=="AMGCL") or (solver=="Hypre"))# Substitute False with (solver=="Hypre") after finishing hypre block solver
+                thread_enable=(solver!="Hypre")
                 for discr_order in discr_orders:
                     for n_ref in n_refs:
                         for block_size in blocks:
-                            for num_thread in num_threads:
+                            if thread_enable:
+                                for num_thread in num_threads:
+                                    for repeat_time in range(repeat_times):
+                                        if (block_size==1) or (block_enable):
+                                            os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
+                                            run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread)
+                                            assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
+                            else:
                                 for repeat_time in range(repeat_times):
                                     if (block_size==1) or (block_enable):
-                                        os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
-                                        run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread)
-                                        assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
+                                        os.environ["OMP_THREAD_LIMIT"]=str(1)
+                                        run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,1)
+                                        assert(os.environ["OMP_THREAD_LIMIT"]==str(1))                                
 
-                
-
+            

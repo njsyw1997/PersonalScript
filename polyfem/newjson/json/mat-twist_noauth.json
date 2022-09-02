@@ -6,6 +6,7 @@
     "solver": {
         "linear": {
 			"solver": "AMGCL",
+			"precond": "LinearSolver::defaultPrecond()",
             "Hypre":{
                 "pre_max_iter": 1000,
                 "max_iter": 1000,
@@ -17,7 +18,7 @@
             "AMGCL": {
                 "precond": {
                     "relax": {
-                        "degree": 5,
+                        "degree": 16,
                         "type": "chebyshev",
                         "power_iters": 100,
                         "higher": 2,
@@ -27,7 +28,7 @@
                     "class": "amg",
                     "max_levels": 6,
                     "direct_coarse": false,
-                    "ncycle": 1,
+                    "ncycle": 2,
                     "coarsening": {
                         "type": "smoothed_aggregation",
                         "estimate_spectral_radius": true,
@@ -68,17 +69,8 @@
         },
         "advanced": {
             "save_solve_sequence_debug": false,
-            "save_time_sequence": false
+            "save_time_sequence": true
         }
-    },
-    "authen_t1": {
-        "err_h1": 0.007133678232766632,
-        "err_h1_semi": 0.0071244835257094265,
-        "err_l2": 0.00036207681580493627,
-        "err_linf": 0.023712280682136825,
-        "err_linf_grad": 0.2689484814720979,
-        "err_lp": 0.006623505526544393,
-        "margin": 1e-08
     },
     "geometry": [{
         "mesh": "../mesh/twist/mat40x40.msh",
@@ -87,9 +79,6 @@
             "rotation": [90, 0, 0]
         },
         "volume_selection": 1,
-        "advanced": {
-            "normalize_mesh": false
-        },
         "surface_selection": [{
             "id": 1,
             "axis": 1,

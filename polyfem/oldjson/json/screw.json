@@ -5,14 +5,62 @@
     "n_refs": 0,
     "problem_params": {
         "is_time_dependent": true,
-        "rhs": [0, 9.81, 0]
+        "rhs": [0, 0, 0],
+        "dirichlet_boundary": [{
+            "id": 2,
+            "value": [
+                "x*cos(-2*pi*t) + z * sin(-2*pi*t)-x",
+                "-1.33*0.01*t", 
+                "-1*x*sin(-2*pi*t) + z * cos(-2*pi*t)-z"
+            ],
+            "dimension": [true, false, true]
+        }]
     },
-
     "nl_solver": "newton",
     "solver_params": {
-        "mtype": 2,
-        "gradNorm": 1e-5,
-        "useGradNorm": false
+		"Pardiso": {
+			"mtype": 2,
+            "gradNorm": 1e-5,
+            "useGradNorm": false
+		},
+		"Hypre": {
+			"max_iter": 1000,
+			"pre_max_iter": 1000,
+			"tolerance": 1e-10,
+            "gradNorm": 1e-5,
+            "useGradNorm": false
+		},
+		"AMGCL": {
+			"precond": {
+				"relax": {
+					"degree": 16,
+					"type": "chebyshev",
+					"power_iters": 100,
+					"higher": 2,
+					"lower": 0.008333333333,
+					"scale": true
+				},
+				"class": "amg",
+				"max_levels": 6,
+				"direct_coarse": false,
+				"ncycle": 2,
+				"coarsening": {
+					"type": "smoothed_aggregation",
+					"estimate_spectral_radius": true,
+					"relax": 1,
+					"aggr": {
+						"eps_strong": 0
+					}
+				}
+			},
+			"solver": {
+				"tol": 1e-10,
+				"maxiter": 1000,
+				"type": "cg"
+			},
+            "gradNorm": 1e-5,
+            "useGradNorm": false
+		}
     },
     "solver_type": "Eigen::PardisoLDLT",
     "line_search": "backtracking",
@@ -35,11 +83,11 @@
     "save_solve_sequence_debug": false,
     "vismesh_rel_area": 10000000,
     "output": "sim.json",
-    "tend": 5,
+    "tend": 2,
     "dt": 0.01,
     
     "meshes": [{
-        "mesh": "",
+        "mesh": "../../mesh/screw/screw.msh",
         "scale": 0.01,
         "body_id": 1
     }],
@@ -50,7 +98,7 @@
         "rho": 8050
     }],
     "obstacles": [{
-        "mesh": "../mesh/nut.obj",
+        "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/screw/nut.obj",
         "scale": 0.01
     }]
 }
