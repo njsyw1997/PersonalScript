@@ -1,0 +1,129 @@
+{
+    "geometry":{
+            "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/bar/unstructed/square_beam_1.5.msh",
+            "n_refs": 0,
+            "volume_selection": 3,
+            "surface_selection": [{
+                "id": 1,
+                "radius":1,
+                "center":[0,0,50]
+            }, 
+            {
+                "id": 2,
+                "axis": "-z",
+                "position": -50
+            }],
+            "advanced": {
+                "normalize_mesh": false
+            }
+    },
+    "space": {
+        "discr_order": 1,
+        "advanced": {
+            "quadrature_order": -1
+        }
+    },
+    "time": {
+        "time_steps": 1,
+        "dt": 0.01
+    },
+    "materials": {
+        "id": 3,
+        "type": "LinearElasticity",
+        "E": 2100,
+        "nu": 0.3
+    },
+    "boundary_conditions": {
+        "dirichlet_boundary": [
+            {
+                "id": 2,
+                "value": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "dimension":[true,true,true]
+            },
+            {
+                "id": 1,
+                "value": [
+                    0.0,
+                    -2.0,
+                    0.0
+                ],
+                "dimension":[true,true,true]
+            }
+        ]
+    },
+    "solver": {
+        "linear": {
+            "solver": "AMGCL",
+            "precond": "Eigen::DiagonalPreconditioner",
+            "Eigen::BiCGSTAB": {
+                "max_iter": 500,
+                "tolerance": 1e-10
+            },
+            "Eigen::ConjugateGradient": {
+                "max_iter": 1000,
+                "tolerance": 1e-8
+            },
+            "Hypre": {
+                "pre_max_iter": 1000,
+                "max_iter": 1000,
+                "tolerance": 1e-8,
+                "block_size": 3
+            },
+            "Pardiso": {
+                "mtype": 1
+            },
+            "AMGCL": {
+                "precond": {
+                    "relax": {
+                        "degree": 5,
+                        "type": "chebyshev",
+                        "power_iters": 100,
+                        "higher": 1,
+                        "lower": 0.3,
+                        "scale": true
+                    },
+                    "class": "amg",
+                    "max_levels": 25,
+                    "direct_coarse": true,
+                    "ncycle": 1,
+                    "coarsening": {
+                        "type": "smoothed_aggregation",
+                        "estimate_spectral_radius": true,
+                        "relax": 1,
+                        "aggr": {
+                            "eps_strong": 0.08
+                        }
+                    
+                    }
+                },
+                "block_size": 3,
+                "solver": {
+                    "tol": 1e-8,
+                    "maxiter": 1000,
+                    "type": "cg",
+                    "verbose":true
+                }
+            }
+        }
+    },
+    "output": {
+        "json": "result.json",
+        "advanced": {
+            "save_solve_sequence_debug": true,
+            "save_time_sequence": true,
+            "compute_error":false
+        },
+        "paraview": {
+            "file_name": "",
+            "options": {
+                "material": true,
+                "body_ids": true
+            },
+            "vismesh_rel_area": 10000000
+        }
+    }
+}

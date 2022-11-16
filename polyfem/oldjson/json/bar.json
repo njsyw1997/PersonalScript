@@ -5,6 +5,7 @@
 	"discr_order": 1,
 	"use_spline": false,
 
+	"compute_error": false,
 	"problem": "GenericTensor",
 	"tensor_formulation":"LinearElasticity",
 	"export": {},
@@ -41,14 +42,14 @@
 			"mtype": 2
 		},
 		"Hypre": {
-			"max_iter": 5000,
+			"max_iter": 500,
 			"pre_max_iter": 1000,
 			"tolerance": 1e-10
 		},
 		"AMGCL": {
 			"precond": {
 				"relax": {
-					"degree": 16,
+					"degree": 5,
 					"type": "chebyshev",
 					"power_iters": 100,
 					"higher": 2,
@@ -56,22 +57,23 @@
 					"scale": true
 				},
 				"class": "amg",
-				"max_levels": 6,
-				"direct_coarse": false,
-				"ncycle": 2,
+				"max_levels": 25,
+				"direct_coarse": true,
+				"ncycle": 1,
 				"coarsening": {
 					"type": "smoothed_aggregation",
 					"estimate_spectral_radius": true,
 					"relax": 1,
 					"aggr": {
-						"eps_strong": 0
+						"eps_strong": 0.25
 					}
 				}
 			},
 			"solver": {
 				"tol": 1e-10,
 				"maxiter": 1000,
-				"type": "cg"
+				"type": "cg",
+				"verbose": true
 			}
 		}
 	},
@@ -80,7 +82,7 @@
 
 	"normalize_mesh": false,
 	"params": {
-		"E": 210000,
+		"E": 2.1e5,
 		"nu": 0.3
 	},
 

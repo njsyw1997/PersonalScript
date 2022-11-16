@@ -18,19 +18,19 @@ polyfem_exe=os.path.join("/home/yiwei/polyfem_old/build", "PolyFEM_bin")
 current_folder = cwd = os.getcwd()
 json_folder="json"
 json_list=["bar.json"] 
-mesh_folder="../mesh/square"
-# mesh_list=os.listdir(mesh_folder)
+mesh_folder="../mesh/newsquare/structed"
+mesh_list=os.listdir(mesh_folder)
+# mesh_list=["square_beam_0.6.msh"]
 # print(mesh_list)
 # mesh_list=["square_beam_0.021.msh","square_beam_0.020.msh","square_beam_0.019.msh","square_beam_0.016.msh","square_beam_0.013.msh"]
-mesh_list=["square_beam.mesh"]
 # solver_list=["AMGCL","Hypre","Eigen::PardisoLDLT","Eigen::CholmodSupernodalLLT"]
 solver_list=["AMGCL"]
-result_folder="/home/yiwei/results/square_test"
+result_folder="/home/yiwei/results/newsquare_test"
 
-discr_orders=[1,2]
-blocks=[1,3]
+discr_orders=[1]
+blocks=[1]
 n_refs=[0,1,2]
-num_threads=[64]
+num_threads=[32]
 
 # Make result directory
 if (not os.path.exists(result_folder)):
@@ -57,7 +57,7 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
     if (solver_=="AMGCL") or (solver_=="Hypre"):
         json_data["solver_params"][solver_]["block_size"]=block_size_
     json_data["output"] = os.path.join(json_base, "result"+ ".json")
-    json_data["export"]["paraview"]= os.path.join(output_base, "sol_" + ".vtu")
+    # json_data["export"]["paraview"]= os.path.join(output_base, "sol_" + ".vtu")
     #----------------------------------------------------------------
 
     with tempfile.NamedTemporaryFile(suffix=".json") as tmp_json:

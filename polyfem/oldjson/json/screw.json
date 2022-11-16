@@ -33,7 +33,7 @@
 		"AMGCL": {
 			"precond": {
 				"relax": {
-					"degree": 16,
+					"degree": 5,
 					"type": "chebyshev",
 					"power_iters": 100,
 					"higher": 2,
@@ -43,7 +43,7 @@
 				"class": "amg",
 				"max_levels": 6,
 				"direct_coarse": false,
-				"ncycle": 2,
+				"ncycle": 1,
 				"coarsening": {
 					"type": "smoothed_aggregation",
 					"estimate_spectral_radius": true,
@@ -54,7 +54,7 @@
 				}
 			},
 			"solver": {
-				"tol": 1e-10,
+				"tol": 1e-8,
 				"maxiter": 1000,
 				"type": "cg"
 			},

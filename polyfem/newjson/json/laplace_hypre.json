@@ -1,0 +1,148 @@
+{
+    "output": {
+        "json": "sim.json",
+        "paraview": {
+            "file_name": "",
+            "surface": true,
+            "vismesh_rel_area": 10000000,
+            "high_order_mesh": true
+        },
+        "data":{
+            "full_mat":"",
+            "stiffness_mat":"",
+            "solution":"",
+            "stress_mat":""
+        },
+        "advanced": {
+            "save_solve_sequence_debug": false,
+            "save_time_sequence": false
+        }
+    },
+    "space": {
+        "discr_order": 1,
+        "advanced": {
+            "quadrature_order": -1
+        }
+    },
+    "solver": {
+        "linear": {
+            "solver": "AMGCL",
+            "precond": "Eigen::DiagonalPreconditioner",
+            "Eigen::BiCGSTAB": {
+                "max_iter": 500,
+                "tolerance": 1e-10
+            },
+            "Eigen::ConjugateGradient": {
+                "max_iter": 1000,
+                "tolerance": 1e-8
+            },
+            "Hypre": {
+                "pre_max_iter": 1000,
+                "max_iter": 1000,
+                "tolerance": 1e-8
+            },
+            "Pardiso": {
+                "mtype": 1
+            },
+            "AMGCL": {
+                "precond": {
+                    "relax": {
+                        "degree": 5,
+                        "type": "chebyshev",
+                        "power_iters": 100,
+                        "higher": 1,
+                        "lower": 0.03,
+                        "scale": true
+                    },
+                    "class": "amg",
+                    "max_levels": 25,
+                    "direct_coarse": true,
+                    "ncycle": 1,
+                    "coarsening": {
+                        "type": "smoothed_aggregation",
+                        "estimate_spectral_radius": false,
+                        "relax": 1.0,
+                        "aggr": {
+                            "eps_strong": 0.00
+                        }
+                    }
+                },
+                "solver": {
+                    "tol": 1e-8,
+                    "maxiter": 1000,
+                    "type": "cg",
+                    "verbose":true
+                }
+            }
+        }
+    },
+    "geometry": {
+        "mesh": "../contact/meshes/3D/simple/cube.msh",
+        "n_refs": 1,
+        "surface_selection": [
+        {
+            "axis": "-X",
+            "position": 1e-5,
+            "id": 1
+        }, 
+        {
+            "axis": "X",
+            "position": 0.99999,
+            "id": 3
+        }, 
+        {
+            "axis": "-Y",
+            "position": 1e-5,
+            "id": 2
+        }, {
+            "axis": "Y",
+            "position": 0.99999,
+            "id": 4
+        },
+        {
+            "axis": "-Z",
+            "position": 1e-5,
+            "id": 5
+        }, 
+        {
+            "axis": "Z",
+            "position": 0.99999,
+            "id": 6
+        }],
+        "advanced": {
+            "normalize_mesh": true
+        }
+    },
+    "boundary_conditions":{
+        "rhs":1,
+        "dirichlet_boundary": [
+            {
+                "id": 1,
+                "value": 0
+            },
+            {
+                "id": 2,
+                "value": 0
+            },
+            {
+                "id": 3,
+                "value": 0
+            },
+            {
+                "id": 4,
+                "value": 0
+            },
+            {
+                "id": 5,
+                "value": 0
+            },
+            {
+                "id": 6,
+                "value": 0
+            }
+        ]
+    },
+    "materials": {
+        "type": "Laplacian"
+    }
+}

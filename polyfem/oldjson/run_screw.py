@@ -22,14 +22,14 @@ mesh_folder="../mesh/screw"
 # mesh_list=os.listdir(mesh_folder)
 # mesh_list=["square_beam_0.021.msh","square_beam_0.020.msh","square_beam_0.019.msh","square_beam_0.016.msh","square_beam_0.013.msh"]
 mesh_list=["screw.msh"]
-# solver_list=["AMGCL","Eigen::CholmodSupernodalLLT","Eigen::PardisoLDLT"]
-solver_list=["AMGCL","Hypre","Eigen::PardisoLDLT","Eigen::CholmodSupernodalLLT"]
+solver_list=["Eigen::PardisoLDLT"]
+# solver_list=["AMGCL","Hypre","Eigen::PardisoLDLT","Eigen::CholmodSupernodalLLT"]
 result_folder="/home/yiwei/results/screw"
 
 discr_orders=[1]
 blocks=[1,3]
 n_refs=[0]
-num_threads=[64]
+num_threads=[32]
 
 
 # Make result directory
@@ -37,7 +37,7 @@ if (not os.path.exists(result_folder)):
     os.makedirs(result_folder)
 
 def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_time_,num_thread_):
-    temp_path=os.path.join(result_folder,solver_,os.path.splitext(os.path.basename(mesh_))[0],os.path.splitext(os.path.basename(j_file_))[0],discr_order_name[discr_order_],"ref"+str(n_ref_),"block"+str(block_size_),"Thread"+str(num_thread_),str(repeat_time_))
+    temp_path=os.path.join(result_folder,solver_,os.path.splitext(os.path.basename(mesh_))[0],os.path.splitext(os.path.basename(j_file_))[0],discr_order_name[discr_order_-1],"ref"+str(n_ref_),"block"+str(block_size_),"Thread"+str(num_thread_),str(repeat_time_))
     if (not os.path.exists(temp_path)):
         os.makedirs(temp_path)
     json_base=os.path.join(temp_path,"json")
@@ -95,22 +95,15 @@ if __name__ == '__main__':
             mesh_file=os.path.join(mesh_folder,mesh_name)
             for solver in solver_list:
                 block_enable=((solver=="AMGCL") or (solver=="Hypre"))# Substitute False with (solver=="Hypre") after finishing hypre block solver
-                thread_enable=(solver!="Hypre")
                 for discr_order in discr_orders:
                     for n_ref in n_refs:
                         for block_size in blocks:
-                            if thread_enable:
-                                for num_thread in num_threads:
-                                    for repeat_time in range(repeat_times):
-                                        if (block_size==1) or (block_enable):
-                                            os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
-                                            run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread)
-                                            assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
-                            else:
+                            for num_thread in num_threads:
                                 for repeat_time in range(repeat_times):
                                     if (block_size==1) or (block_enable):
-                                        os.environ["OMP_THREAD_LIMIT"]=str(1)
-                                        run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,1)
-                                        assert(os.environ["OMP_THREAD_LIMIT"]==str(1))                                
+                                        os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
+                                        run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread)
+                                        assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
+                             
 
             

@@ -44,7 +44,7 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
         json_data = json.load(f)
     json_data["solver"]["linear"]["solver"]=solver_
     json_data["geometry"][0]["mesh"] = mesh_
-    # json_data["geometry"]["n_refs"] =n_ref_ #Not implemented in newest polyfem
+    json_data["geometry"]["n_refs"] =n_ref_
     json_data["space"]["discr_order"] = discr_order_
     if (solver_=="AMGCL") or (solver_=="Hypre"):
         json_data["solver"]["linear"][solver_]["block_size"]=block_size_
@@ -84,7 +84,7 @@ if __name__ == '__main__':
                                 for repeat_time in range(repeat_times):
                                     if (block_size==1) or (block_enable):
                                         os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
-                                        print(solver+"_"+mesh_name+"_"+discr_order_name[discr_order]+"_"+"n_ref"+str(n_ref)+"_"+"Block"+str(block_size))                                        
+                                        print(solver+"_"+mesh_name+"_"+discr_order_name[discr_order-1]+"_"+"n_ref"+str(n_ref)+"_"+"Block"+str(block_size))                                        
                                         run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread)                                        
                                         assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
                          
