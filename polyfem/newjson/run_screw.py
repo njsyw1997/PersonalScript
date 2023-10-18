@@ -4,6 +4,7 @@ import math
 import os
 import subprocess
 import tempfile
+from unittest import result
 import numpy as np
 
 # Prepare the folder
@@ -12,29 +13,20 @@ repeat_times=1
 polyfem_exe=os.path.join("/home/yiwei/polyfem/build", "PolyFEM_bin")
 current_folder = cwd = os.getcwd()
 json_folder="json"
-json_list=["laplace_franke.json"]
-# json_list=["laplace.json"]
-mesh_folder="/home/yiwei/PersonalScript/polyfem/mesh/laplace3d/struct/tet"
-# mesh_list=["square_beam2d_quad_100.msh"]
-# mesh_list=["plane_hole_3.obj"]
-mesh_list=os.listdir(mesh_folder)
-# mesh_list=["cube_struct_30.msh"]
-# solver_list=["AMGCL","Hypre","Eigen::CholmodSupernodalLLT","Eigen::PardisoLDLT"]
-solver_list=["Trilinos"]
-result_folder="/home/yiwei/results_null_test/laplace/3d/unstructed"
-# result_folder="/home/yiwei/result_mass_solver"
-eps_strongs=[0.08]
-# eps_strongs=[0,0.02,0.04,0.06,0.08,0.10,0.15,0.99] # Check if AMGCL's preconditioner is Smoothed Aggregation
-discr_orders=[1,2]
-num_threads=[32]
+json_list=["screw.json"] 
+mesh_folder="../mesh/screw"
+# mesh_list=['mat100x100t40.msh', 'mat40x40.msh', 'mat150x150t40.msh', 'mat20x20.msh']
+mesh_list=['screw.msh']
+
+solver_list=["Eigen::PardisoLDLT"]
+# result_folder="/home/yiwei/result_new_material/novec/unconstrainedOgden"
+result_folder="/home/yiwei/result_test/screw"
+
+eps_strongs=[0.00] # Check if AMGCL's preconditioner is Smoothed Aggregation
+discr_orders=[1]
+num_threads=[8]
 blocks=[1]
 n_refs=[0]
-
-# eps_strongs=[0.05] # Check if AMGCL's preconditioner is Smoothed Aggregation
-# discr_orders=[1]
-# num_threads=[32]
-# blocks=[1]
-# n_refs=[0]
 
 
 
@@ -60,19 +52,19 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
     if eps_strong_!=None:
         json_data["solver"]["linear"]["AMGCL"]["precond"]["coarsening"]["aggr"]["eps_strong"]=eps_strong_
     json_data["solver"]["linear"]["solver"]=solver_
-    json_data["geometry"]["mesh"] = mesh_
-    json_data["geometry"]["n_refs"] =n_ref_ 
+    # json_data["geometry"][0]["mesh"] = mesh_
+    json_data["geometry"][0]["n_refs"] =n_ref_ 
     json_data["space"]["discr_order"] = discr_order_
-    if (solver_=="AMGCL") or (solver_=="Hypre"):
+    if (solver_=="AMGCL") or (solver_=="Hypre") or (solver_=="Trilinos"):
         json_data["solver"]["linear"][solver_]["block_size"]=block_size_
     json_data["output"]["json"] = os.path.join(json_base, "result"+ ".json")
     # json_data["output"]["data"]["stiffness_mat"] = os.path.join(output_base, "stiffness.mtx")
+    # json_data["output"]["data"]["full_mat"] = os.path.join(output_base, "points.mtx")
     # json_data["output"]["data"]["solution"] = os.path.join(output_base, "solution.mtx")
-    # if((discr_order_==1) and (n_ref_==0) and (solver_=="Hypre")):
-    #     json_data["output"]["paraview"]["file_name"] = os.path.join(output_base, "sim.vtu")
-        # json_data["output"]["data"]["full_mat"] = os.path.join(output_base, "full.mat")
-        # json_data["output"]["paraview"]["file_name"] = "sim.vtu"
-    # json_data["output"]["data"]["full_mat"] = output_base
+    if((discr_order_==1) and (n_ref_==0)):
+        json_data["output"]["paraview"]["file_name"] = os.path.join(output_base, "sim.vtu")
+    #     json_data["output"]["data"]["full_mat"] = os.path.join(output_base, "full.mat")
+    #     json_data["output"]["paraview"]["file_name"] = "sim.vtu"
     #----------------------------------------------------------------
 
     with tempfile.NamedTemporaryFile(suffix=".json") as tmp_json:
@@ -85,7 +77,7 @@ def run_program(solver_,mesh_,j_file_,discr_order_,n_ref_,block_size_,repeat_tim
         cpufile=open(output_base+"/cpu.txt", "w")
         cpufile.close()
         p1=subprocess.Popen(['sh', './thread.sh',output_base+"/cpu.txt"])
-        assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread_))
+        assert(os.environ["OMP_NUM_THREADS"]==str(num_thread_))
         subprocess.run(args,stdout=logfile,stderr=logfile)     
         # subprocess.run(args)    
         p1.kill()
@@ -99,7 +91,7 @@ if __name__ == '__main__':
             json_file=os.path.join(json_folder,json_name)
             mesh_file=os.path.join(mesh_folder,mesh_name)
             for solver in solver_list:
-                block_enable=((solver=="AMGCL") or (solver=="Hypre"))# Substitute False with (solver=="Hypre") after finishing hypre block solver
+                block_enable=((solver=="AMGCL") or (solver=="Hypre") or (solver=="Trilinos"))# Substitute False with (solver=="Hypre") after finishing hypre block solver
                 eps_strong_enable=(solver=="AMGCL") and (eps_strongs)
                 for discr_order in discr_orders:
                     for n_ref in n_refs:
@@ -109,16 +101,12 @@ if __name__ == '__main__':
                                     if (block_size==1) or (block_enable):
                                         if eps_strong_enable:
                                             for eps_strong in eps_strongs:
-                                                os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
+                                                os.environ["OMP_NUM_THREADS"]= str(num_thread)
                                                 print(solver+"_"+mesh_name+"_"+discr_order_name[discr_order-1]+"_"+"n_ref"+str(n_ref)+"_"+"Block"+str(block_size)+"_eps_strong="+str(eps_strong))
                                                 run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread,eps_strong_=eps_strong)
-                                                assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
+                                                assert(os.environ["OMP_NUM_THREADS"]==str(num_thread))
                                         else:                                            
-                                            os.environ["OMP_THREAD_LIMIT"]= str(num_thread)
+                                            os.environ["OMP_NUM_THREADS"]= str(num_thread)
                                             print(solver+"_"+mesh_name+"_"+discr_order_name[discr_order-1]+"_"+"n_ref"+str(n_ref)+"_"+"Block"+str(block_size))
                                             run_program(solver,mesh_file,json_file,discr_order,n_ref,block_size,repeat_time,num_thread)
-                                            assert(os.environ["OMP_THREAD_LIMIT"]==str(num_thread))
-                             
-
-                
-
+                                            assert(os.environ["OMP_NUM_THREADS"]==str(num_thread))

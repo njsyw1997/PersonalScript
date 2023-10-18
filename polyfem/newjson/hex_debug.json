@@ -1,37 +1,31 @@
 {
-    "geometry": {
-        "mesh": "plate_hole.obj",
-        "surface_selection": [{
-            "axis": "-X",
-            "position": 1e-5,
-            "id": 1
-        }, {
-            "axis": "X",
-            "position": 0.99999,
-            "id": 3
-        }, {
-            "axis": "-Y",
-            "position": 1e-5,
-            "id": 2
-        }, {
-            "axis": "Y",
-            "position": 0.99999,
-            "id": 4
-        }],
+    "output": {
+        "json": "sim.json",
+        "paraview": {
+            "file_name": "",
+            "surface": true,
+            "vismesh_rel_area": 10000000
+        },
+        "data":{
+            "full_mat":"",
+            "stiffness_mat":"",
+            "solution":"",
+            "stress_mat":""
+        },
         "advanced": {
-            "normalize_mesh": true
+            "save_solve_sequence_debug": false,
+            "save_time_sequence": false
         }
     },
-
-    "materials": {
-        "type": "Laplacian"
-    },
-    "preset_problem": {
-        "type": "Franke"
+    "space": {
+        "discr_order": 1,
+        "advanced": {
+            "quadrature_order": -1
+        }
     },
     "solver": {
         "linear": {
-            "solver": "AMGCL",
+            "solver": "Hypre",
             "precond": "Eigen::DiagonalPreconditioner",
             "Eigen::BiCGSTAB": {
                 "max_iter": 500,
@@ -43,6 +37,7 @@
             },
             "Hypre": {
                 "pre_max_iter": 1000,
+                "block_size": 3,
                 "max_iter": 1000,
                 "tolerance": 1e-8
             },
@@ -79,28 +74,14 @@
                     "verbose":true
                 }
             }
-        },
-        "advanced":{
-            "lump_mass_matrix": false
         }
     },
-    "space": {
-        "discr_order": 1,
+    "geometry": {
+        "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/bar/unstructed/square_beam_5.0.msh",
+        "n_refs": 0,
+        "surface_selection": 1,
         "advanced": {
-            "quadrature_order": -1
-        }
-    },
-
-    "output": {
-        "json": "result.json",
-        "paraview": {
-            "file_name": ""
-        },
-        "data":{
-            "full_mat":"",
-            "stiffness_mat":"",
-            "solution":"",
-            "stress_mat":""
+            "normalize_mesh": true
         }
     }
 }

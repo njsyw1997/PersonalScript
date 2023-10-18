@@ -1,49 +1,7 @@
 {
-    "geometry": [
-        {
-            "mesh": "../mesh/screw/screw.msh",
-            "transformation": {
-                "translation": [
-                    0,
-                    0,
-                    0
-                ],
-                "scale": 0.01
-            },
-            "n_refs":0,
-            "volume_selection": 1,
-            "surface_selection": 2,
-            "advanced": {
-                "normalize_mesh": false
-            }
-        },
-        {
-            "mesh": "../mesh/screw/nut.obj",
-            "is_obstacle": true,
-            "enabled": true,
-            "transformation": {
-                "translation": [
-                    0,
-                    -0.02675,
-                    0
-                ],
-                "scale": 0.01
-            }
-        }
-    ],
-    "space": {
-        "advanced": {
-            "quadrature_order": 1
-        }
-    },
-    "time": {
-        "tend": 0.2,
-        "dt": 0.02
-    },
     "contact": {
         "enabled": true,
-        "dhat": 0.0001,
-        "friction_coefficient": 0.3
+        "dhat": 0.001
     },
     "solver": {
         "linear": {
@@ -108,48 +66,17 @@
                 "method": "backtracking"
             },
             "solver": "newton",
-            "grad_norm": 1e-05,
-            "use_grad_norm": false
+            "x_delta": 1e-05
         },
         "advanced": {
             "lump_mass_matrix": true
         }
     },
-    "boundary_conditions": {
-        "rhs": [
-            0,
-            9.81,
-            0
-        ],
-        "dirichlet_boundary": [
-            {
-                "id": 2,
-                "value": [
-                    "x*cos(-2*pi*t) + z * sin(-2*pi*t)-x",
-                    "-1.33*0.01*t",
-                    "-1*x*sin(-2*pi*t) + z * cos(-2*pi*t)-z"
-                ],
-                "dimension": [
-                    true,
-                    false,
-                    true
-                ]
-            }
-        ]
-    },
-    "materials": [
-        {
-            "id": 1,
-            "E": 200000000000.0,
-            "nu": 0.3,
-            "rho": 8050,
-            "type": "NeoHookean"
-        }
-    ],
     "output": {
-        "json": "result.json",
+        "json": "/home/yiwei/result_test/sim.json",
         "paraview": {
-            "file_name": "screws.pvd",
+            "file_name": "",
+            "skip_frame": 2,
             "options": {
                 "material": true,
                 "body_ids": true
@@ -158,7 +85,63 @@
         },
         "advanced": {
             "save_solve_sequence_debug": false,
-            "save_time_sequence": true
+            "save_time_sequence": false
         }
-    }
+    },
+    "authen_t1": {
+        "err_h1": 0.007133678232766632,
+        "err_h1_semi": 0.0071244835257094265,
+        "err_l2": 0.00036207681580493627,
+        "err_linf": 0.023712280682136825,
+        "err_linf_grad": 0.2689484814720979,
+        "err_lp": 0.006623505526544393,
+        "margin": 1e-08
+    },
+    "geometry": [{
+        "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/twist/mat20x20.msh",
+        "transformation": {
+            "translation": [0, 0, 0],
+            "rotation": [90, 0, 0]
+        },
+        "volume_selection": 1,
+        "advanced": {
+            "normalize_mesh": false
+        },
+        "surface_selection": [{
+            "id": 1,
+            "axis": 1,
+            "position": 0.5
+        }, {
+            "id": 3,
+            "axis": -1,
+            "position": -0.5
+        }]
+    }],
+    "space": {
+        "discr_order": 1,
+        "advanced": {
+            "quadrature_order": -1
+        }
+    },
+    "time": {
+        "tend": 1.6,
+        "dt": 0.04
+    },
+    "boundary_conditions": {
+        "rhs": [0, 0, 0],
+        "dirichlet_boundary": [{
+            "id": 1,
+            "value": [0, "y*cos((-0.4*pi)*t)-z*sin((-0.4*pi)*t)-y", "y*sin((-0.4*pi)*t)+z*cos((-0.4*pi)*t)-z"]
+        }, {
+            "id": 3,
+            "value": [0, "y*cos((0.4*pi)*t)-z*sin((0.4*pi)*t)-y", "y*sin((0.4*pi)*t)+z*cos((0.4*pi)*t)-z"]
+        }]
+    },
+    "materials": [{
+        "id": 1,
+        "E": 20000,
+        "nu": 0.4,
+        "rho": 1000,
+        "type": "NeoHookean"
+    }]
 }

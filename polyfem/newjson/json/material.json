@@ -1,0 +1,38 @@
+"materials": {
+    "c1": 7692,
+    "c2": -5000,
+    "k": 11540.0,
+    "type": "MooneyRivlin"
+},
+"materials": {
+    "c": 32900,
+    "k": 1e5,
+    "m": 6.82,
+    "type": "IncompressibleOgden"
+},
+"materials": {
+    "Ds": 2e-05,
+    "alphas": 6.82,
+    "mus": 32900,
+    "type": "UnconstrainedOgden"
+},
+"materials": {
+    "E": 210000,
+    "nu": 0.3,
+    "type": "SaintVenant"
+},
+"materials": {
+    "E": 210000,
+    "nu": 0.3,
+    "type": "NeoHookean"
+},
+"materials": {
+    "E": 210000,
+    "nu": 0.3,
+    "type": "HookeLinearElasticity"
+},
+"materials": {
+    "type": "LinearElasticity",
+    "E": 210000,
+    "nu": 0.3
+},

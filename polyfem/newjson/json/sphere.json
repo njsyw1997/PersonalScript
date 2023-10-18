@@ -1,49 +1,57 @@
 {
-    "geometry": [
-        {
-            "mesh": "../mesh/screw/screw.msh",
-            "transformation": {
-                "translation": [
-                    0,
-                    0,
-                    0
-                ],
-                "scale": 0.01
-            },
-            "n_refs":0,
-            "volume_selection": 1,
-            "surface_selection": 2,
+    "geometry":{
+            "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/sphere/sphere_0.1.msh",
+            "n_refs": 0,
+            "volume_selection":3,
+            "transformation":{
+                "scale":[1.0,1.0,1.0]
+            },            
+            "surface_selection": [{
+                "id": 1,
+                "box": [[-1.0,0.00001,-1.0],[1.0,1.0,1.0]]
+            }, 
+            {
+                "id": 2,
+                "axis": "-y",
+                "position": 0
+            }],
             "advanced": {
                 "normalize_mesh": false
             }
-        },
-        {
-            "mesh": "../mesh/screw/nut.obj",
-            "is_obstacle": true,
-            "enabled": true,
-            "transformation": {
-                "translation": [
-                    0,
-                    -0.02675,
-                    0
-                ],
-                "scale": 0.01
-            }
-        }
-    ],
+    },
     "space": {
+        "discr_order": 1,
         "advanced": {
-            "quadrature_order": 1
+            "quadrature_order": -1
         }
     },
-    "time": {
-        "tend": 0.2,
-        "dt": 0.02
+    "materials": {
+        "type": "LinearElasticity",
+        "E": 210000,
+        "nu": 0.3
     },
-    "contact": {
-        "enabled": true,
-        "dhat": 0.0001,
-        "friction_coefficient": 0.3
+    "boundary_conditions": {
+        "dirichlet_boundary": [
+            {
+                "id": 2,
+                "value": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "dimension":[true,true,true]
+            }
+        ],
+        "neumann_boundary":[
+            {
+                "id": 1,
+                "value": [
+                    0,
+                    -1.0,
+                    0
+                ]
+            }
+        ]
     },
     "solver": {
         "linear": {
@@ -103,62 +111,31 @@
                 }
             }
         },
-        "nonlinear": {
-            "line_search": {
-                "method": "backtracking"
-            },
-            "solver": "newton",
-            "grad_norm": 1e-05,
-            "use_grad_norm": false
-        },
-        "advanced": {
-            "lump_mass_matrix": true
+        "advanced":{
+            "lump_mass_matrix": false
         }
     },
-    "boundary_conditions": {
-        "rhs": [
-            0,
-            9.81,
-            0
-        ],
-        "dirichlet_boundary": [
-            {
-                "id": 2,
-                "value": [
-                    "x*cos(-2*pi*t) + z * sin(-2*pi*t)-x",
-                    "-1.33*0.01*t",
-                    "-1*x*sin(-2*pi*t) + z * cos(-2*pi*t)-z"
-                ],
-                "dimension": [
-                    true,
-                    false,
-                    true
-                ]
-            }
-        ]
-    },
-    "materials": [
-        {
-            "id": 1,
-            "E": 200000000000.0,
-            "nu": 0.3,
-            "rho": 8050,
-            "type": "NeoHookean"
-        }
-    ],
     "output": {
-        "json": "result.json",
+        "json": "",
+        "advanced": {
+            "save_solve_sequence_debug": false,
+            "save_time_sequence": false,
+            "compute_error":false
+        },
         "paraview": {
-            "file_name": "screws.pvd",
+            "file_name": "",
+            "skip_frame":10,
             "options": {
                 "material": true,
                 "body_ids": true
             },
             "vismesh_rel_area": 10000000
         },
-        "advanced": {
-            "save_solve_sequence_debug": false,
-            "save_time_sequence": true
+        "data":{
+            "full_mat":"",
+            "stiffness_mat":"",
+            "solution":"",
+            "stress_mat":""
         }
     }
 }

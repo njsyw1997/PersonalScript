@@ -1,57 +1,46 @@
 {
-    "geometry":{
-            "mesh": "/home/yiwei/test_mesh/2d/struct/square_beam2d_struct_5.msh",
-            "n_refs": 0,
-            "volume_selection": 3,
-            "surface_selection": [{
-                "id": 1,
-                "axis": "y",
-                "position": 50
-            }, 
-            {
-                "id": 2,
-                "axis": "-y",
-                "position": -50
-            }],
-            "advanced": {
-                "normalize_mesh": false
-            }
+    "tests": {
+        "err_h1": 0.384971062197338,
+        "err_h1_semi": 0.15763401692209283,
+        "err_l2": 0.35121821626782407,
+        "err_linf": 0.3636100480947732,
+        "err_linf_grad": 0.3636100480947732,
+        "err_lp": 0.34602216305085826,
+        "margin": 1e-05,
+        "time_steps": "static"
     },
     "space": {
         "discr_order": 1,
         "advanced": {
-            "quadrature_order": -1,
-            "bc_method": "sample"
+            "quadrature_order": -1
         }
     },
-    "materials": {
-        "E": 210000,
-        "nu": 0.3,
-        "type": "LinearElasticity"
-    },
-    "boundary_conditions": {
-        "dirichlet_boundary": [
-            {
-                "id": 2,
-                "value": [
-                    0.0,
-                    0.0
-                ]
-            }
-        ],
-        "neumann_boundary":[
-            {
-                "id": 1,
-                "value": [
-                    -2.0,
-                    0.0
-                ]
-            }
-        ]
+    "geometry": [
+        {
+        "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/cube/cube.msh",
+        "transformation": {
+            "translation": [0, 0, 0]
+        },
+        "n_refs": 2,
+        "surface_selection": [{
+            "id": 1,
+            "axis": -2,
+            "position": -0.499
+        }]
+    }, 
+    {
+        "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/cube/cube.msh",
+        "transformation": {
+            "translation": [0, 1.2, 0]
+        },
+        "n_refs": 2
+    }],
+    "contact": {
+        "friction_coefficient": 0.5
     },
     "solver": {
         "linear": {
-            "solver": "Trilinos",
+            "solver": "Eigen::SimplicialLDLT",
             "precond": "Eigen::IdentityPreconditioner",
             "Eigen::BiCGSTAB": {
                 "max_iter": 500,
@@ -65,7 +54,7 @@
                 "pre_max_iter": 1000,
                 "max_iter": 1000,
                 "tolerance": 1e-8,
-                "block_size": 2
+                "block_size": 3
             },
             "Pardiso": {
                 "mtype": 1
@@ -73,11 +62,10 @@
             "Trilinos": {
                 "max_iter": 1000,
                 "tolerance": 1e-8,
-                "block_size": 2,
-                "is_nullspace": false
+                "block_size": 3
             },
             "AMGCL": {
-                "block_size": 2,
+                "block_size": 3,
                 "precond": {
                     "relax": {
                         "degree": 5,
@@ -108,30 +96,40 @@
                 }
             }
         },
-        "advanced":{
-            "lump_mass_matrix": false
+        "nonlinear": {
+            "use_grad_norm": 1e-5
+        },
+        "contact": {
+            "friction_iterations": -1,
+            "barrier_stiffness": 1e9
+        },
+        "advanced": {
+            "lagged_regularization_weight": 500,
+            "lagged_regularization_iterations": 2
         }
+    },
+    "boundary_conditions": {
+        "rhs": [0, 9.81, 0],
+        "dirichlet_boundary": [{
+            "id": 1,
+            "value": [0, 0, 0]
+        }]
+    },
+    "materials": {
+        "type": "NeoHookean",
+        "E": 100000,
+        "nu": 0.4,
+        "rho": 1000
     },
     "output": {
         "json": "",
-        "advanced": {
-            "save_solve_sequence_debug": false,
-            "save_time_sequence": false,
-            "compute_error":false
-        },
         "paraview": {
-            "file_name": "",
-            "options": {
-                "material": true,
-                "body_ids": true
-            },
-            "vismesh_rel_area": 10000000
+            "file_name": "sol.vtu"
         },
-        "data":{
-            "full_mat":"",
-            "stiffness_mat":"",
-            "solution":"",
-            "stress_mat":""
+        "advanced": {
+            "save_solve_sequence_debug": true,
+            "save_time_sequence": false,
+            "save_nl_solve_sequence": true
         }
     }
 }

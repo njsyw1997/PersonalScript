@@ -1,12 +1,15 @@
 {
     "geometry":{
-            "mesh": "/home/yiwei/PersonalScript/polyfem/mesh/bar/unstructed/square_beam_1.5.msh",
+            "mesh": "/home/yiwei/test_mesh/3d/unstruct/square_beam_1.5.msh",
             "n_refs": 0,
-            "volume_selection": 3,
+            "volume_selection":3,
+            "transformation":{
+                "scale":[1.0,1.0,1.0]
+            },            
             "surface_selection": [{
                 "id": 1,
-                "radius":1,
-                "center":[0,0,50]
+                "axis": "+z",
+                "position": 50
             }, 
             {
                 "id": 2,
@@ -23,15 +26,10 @@
             "quadrature_order": -1
         }
     },
-    "time": {
-        "time_steps": 1,
-        "dt": 0.01
-    },
     "materials": {
-        "id": 3,
-        "type": "LinearElasticity",
-        "E": 2100,
-        "nu": 0.3
+        "E": 210000,
+        "nu": 0.3,
+        "type": "NeoHookean"
     },
     "boundary_conditions": {
         "dirichlet_boundary": [
@@ -57,8 +55,8 @@
     },
     "solver": {
         "linear": {
-            "solver": "AMGCL",
-            "precond": "Eigen::DiagonalPreconditioner",
+            "solver": "Trilinos",
+            "precond": "Eigen::IdentityPreconditioner",
             "Eigen::BiCGSTAB": {
                 "max_iter": 500,
                 "tolerance": 1e-10
@@ -76,14 +74,20 @@
             "Pardiso": {
                 "mtype": 1
             },
+            "Trilinos": {
+                "max_iter": 1000,
+                "tolerance": 1e-8,
+                "block_size": 3
+            },
             "AMGCL": {
+                "block_size": 3,
                 "precond": {
                     "relax": {
                         "degree": 5,
                         "type": "chebyshev",
                         "power_iters": 100,
                         "higher": 1,
-                        "lower": 0.3,
+                        "lower": 0.03,
                         "scale": true
                     },
                     "class": "amg",
@@ -92,15 +96,13 @@
                     "ncycle": 1,
                     "coarsening": {
                         "type": "smoothed_aggregation",
-                        "estimate_spectral_radius": true,
-                        "relax": 1,
+                        "estimate_spectral_radius": false,
+                        "relax": 1.0,
                         "aggr": {
                             "eps_strong": 0.08
                         }
-                    
                     }
                 },
-                "block_size": 3,
                 "solver": {
                     "tol": 1e-8,
                     "maxiter": 1000,
@@ -108,22 +110,32 @@
                     "verbose":true
                 }
             }
+        },
+        "advanced":{
+            "lump_mass_matrix": false
         }
     },
     "output": {
-        "json": "result.json",
+        "json": "/home/yiwei/result.json",
         "advanced": {
-            "save_solve_sequence_debug": true,
-            "save_time_sequence": true,
+            "save_solve_sequence_debug": false,
+            "save_time_sequence": false,
             "compute_error":false
         },
         "paraview": {
             "file_name": "",
+            "skip_frame":10,
             "options": {
                 "material": true,
                 "body_ids": true
             },
             "vismesh_rel_area": 10000000
+        },
+        "data":{
+            "full_mat":"",
+            "stiffness_mat":"",
+            "solution":"",
+            "stress_mat":""
         }
     }
 }
